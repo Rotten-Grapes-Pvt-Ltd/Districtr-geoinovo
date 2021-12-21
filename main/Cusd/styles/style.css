@@ -1,0 +1,142 @@
+body {
+  font-size: 14px;
+}
+.map {
+  height: 100vh;
+  width: 65%;
+}
+#sideBar {
+  position: fixed;
+  width: 350px;
+  z-index: 2;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+  background-color: #f8f8f8;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+#sideBar.hide {
+  right: -350px;
+}
+#menuIcon {
+  position: absolute;
+  z-index: 1;
+  right: 10px;
+  top: 10px;
+  background: #fff;
+  width: 25px;
+  height: 25px;
+  border-radius: 15px;
+  text-align: center;
+  line-height: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.colors {
+  text-align: right;
+  margin: 0;
+}
+.colors li,
+.brushColor {
+  list-style: none;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+.colors li:hover,
+.colors li.selected {
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+.brushColor {
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  line-height: 18px;
+}
+.tab-content {
+  background-color: #fff;
+  padding: 10px;
+}
+
+.tab-content .accordion-button {
+  flex-flow: row-reverse;
+  justify-content: flex-end;
+}
+.tab-content .accordion-button::after {
+  flex-flow: row-reverse;
+  justify-content: flex-end;
+  margin: 0 10px 0 0;
+}
+.tab-content .accordion-button:not(.collapsed) {
+  background-color: transparent;
+  font-weight: bold;
+}
+.accordion-item {
+  border: none;
+}
+.table th,
+.table td {
+  font-size: 12px;
+}
+
+.maplibregl-popup {
+  max-width: 500px;
+  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.icofont-info-circle.me-1:hover{
+   cursor:pointer;
+}
+
+.accordion-body{
+  padding:0rem !important;
+}
+
+.icofont-share.me-1:hover{
+   cursor:pointer;
+}
+
+.icofont-exit:hover{
+   cursor:pointer;
+}
+
+.icofont-eraser:hover{
+   cursor:pointer;
+}
+
+#circle {
+  width: 20px;
+  height: 20px;
+  background: red;
+  border-radius: 50%
+}
+#loader{
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+  z-index: 999;
+}
+#loader img{
+  max-width: 100%;
+}
+#loader.show{
+  opacity: 0.8;
+  visibility: visible;
+}

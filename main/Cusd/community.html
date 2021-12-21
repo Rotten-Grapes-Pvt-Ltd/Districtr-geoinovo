@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/css/ol.css" type="text/css">
+ 
+    <link href="./styles/style.css" rel="stylesheet" />
+    <link href="./styles/icofont.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>   <link
+      href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/build/ol.js"></script>
+    <script src="./scripts/Filesaver.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
+    <script src="./scripts/shp.js"></script>
+
+    <title>community</title>
+</head>
+
+<body>
+    <div class="modal fade" id="shareLinkconfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" onclick = "closeModal()" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel1">Shared Link</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+             <button class = "btn btn-primary" onclick = "closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="fileSaveconfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" onclick = "closeModal()" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel2">Save</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+             <button class = "btn btn-primary"  onclick = "generateLink();" id = "generate">Generate</button>
+             <button class = "btn btn-primary"  onclick = "checkfileandsave();" id = "save">Save</button>
+             <button class = "btn btn-primary" onclick = "closeModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <span id="menuIcon">
+        <i class="icofont-navigation-menu"></i>
+    </span>
+   <div id="map" class="map"></div>
+    <div id="loader">
+        <img src="../../static/images/loading.gif" alt="">
+    </div>
+    <div id="sideBar">
+        <div class="container-fluid bg-dark py-1">
+            <div class="row fs-5">
+                <div class="col-auto"><i class="icofont-close-circled  text-danger" id="close"></i></div>
+                <div class="col text-end text-light ">
+                    <button id = "home" onclick="window.location.href='https://geoinovo.net/main/cusd.html'" class = "btn btn-light btn-sm" style="left:5px;float:left;position:absolute;top:6px;border:1px solid rgba(255,255,255,0.5); background:#fff">Home</button>
+                    <button id = "save" onclick="saveCommunities()" class = "btn btn-light btn-sm" style="border:1px solid rgba(255,255,255,0.5); background:#fff">Save</button>
+                    <i class="icofont-eraser me-1" onclick = "eraseLayersactivate()" title="Erase Layers"></i>
+                    <i class="icofont-info-circle me-1" onclick = "activateInfoWindow()"  title="Info"></i>
+                    <i class="icofont-share me-1" onclick = "shareLink()"  title="Share"></i>
+                    <i class="icofont-exit" onclick = "downloadJson()" title="Export"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container-fluid py-3">
+            <div class="row mb-3" style = "margin-bottom:-0.25rem!important;">
+                <div class="col-auto">
+                    Color
+                </div>
+                <div class="col">
+                    <ul class="colors">
+                        <li class="selected" onclick = "colorselect(0,this)" style="background-color: #0099cd;"></li>
+                        <li onclick = "colorselect(1,this)" style="background-color: #ffca5d;"></li>
+                        <li onclick = "colorselect(2,this)" style="background-color: #00cd99;"></li>
+                        <li onclick = "colorselect(3,this)" style="background-color: #99cd00;"></li>
+                        <li onclick = "colorselect(4,this)" style="background-color: #cd0099;"></li>
+                        <li onclick = "colorselect(5,this)" style="background-color: #cd0099;"></li>
+                        <li onclick = "colorselect(6,this)" style="background-color: #cd0099;"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row mb-3" style = "margin-bottom:-1rem!important;">
+                <div class="col-12">
+                   <div class="form-label">
+                       <input style = "margin-top:5px" type="checkbox" id="alreadydrawn" name="alreadydrawn">
+                       <span style = "position:absolute;margin-left:2px;margin-top:-1px;">Lock already drawn</span>
+                   </div>
+                </div>
+            </div>
+            <div class="row mb-3" style = "margin-bottom:-1rem!important;">
+                <div class="col-12">
+                   <div class="form-label">
+                       <input style = "margin-top:5px" type="checkbox" onclick = "unassignedlayer(event)" id="unassignedlayer" name="unassignedlayer">
+                       <span style = "position:absolute;margin-left:2px;">Show unassigned Layers</span>
+                   </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row mb-3">
+                <label for="customRange3" class="form-label col-auto">Brush Size</label>
+                <div class="col"><input value = 1 type="range" class="form-range" min="1" max="100" step="1" id="brushRange">
+                </div>
+                <div class="col-2" id="brushSize"></div>
+            </div>
+        </div>
+   <ul>
+            <li>Select blocks for Community of Interest</li>
+              <li> Name your Community of Interest</li> 
+                <li> Describe your Community of Interest</li>
+        </ul>
+        <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="Population-tab" data-bs-toggle="tab" data-bs-target="#Population"
+                    type="button" role="tab" aria-controls="Population" aria-selected="true">Drawing</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="DataLayers-tab" data-bs-toggle="tab" data-bs-target="#DataLayers"
+                    type="button" role="tab" aria-controls="DataLayers" aria-selected="false">Data Layers</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Evaluation-tab" data-bs-toggle="tab" data-bs-target="#Evaluation"
+                    type="button" role="tab" aria-controls="Evaluation" aria-selected="false">Evaluation</button>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="Population" role="tabpanel" aria-labelledby="Population-tab">
+                <div class="accordion" id="populationAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="aoi">
+                            <button class="accordion-button" id = "areadropdown" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseAoi" aria-expanded="true" aria-controls="collapseAoi">
+                                Community of Interest
+                            </button>
+                        </h2>
+                        <div id="collapseAoi" class="accordion-collapse collapse show" aria-labelledby="aoi"
+                            data-bs-parent="#populationAccordion">
+                            <div class="accordion-body">
+                                <select title="" id = "areaofint" data-width="100%" data-size = "5" class="selectpicker"  aria-label="Default select example"></select>
+                                <input onchange = "updateName()"  id = "communityName" type = "text" style = "width:100%">
+                            </div>
+                            <div class="text">
+                                <textarea disabled id = "communityText" placeholder = "Enter the text" onchange = "updateData()" style  = "margin-top:20px;width:100%;height:100px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="accordion-item">
+                        <h2 class="accordion-header" id="ip">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseIP" aria-expanded="false" aria-controls="collapseIP">
+                                Important places
+                            </button>
+                        </h2>
+                        <div id="collapseIP" class="accordion-collapse collapse" aria-labelledby="ip"
+                            data-bs-parent="#populationAccordion">
+                            <div class="accordion-body">
+                                Important places content
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="DataLayers" role="tabpanel" aria-labelledby="DataLayers-tab">
+                <h5>
+                    Communities
+                </h5>
+                <hr>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Show painted districts
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        Show painted districts
+                    </label>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="Evaluation" role="tabpanel" aria-labelledby="Evaluation-tab">
+                <div class="accordion" id="EvaluationAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingoPulationByRace">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#opulationByRace" aria-expanded="true" aria-controls="opulationByRace">
+                                Population
+                            </button>
+                        </h2>
+                        <div id="populationByRace" class="accordion-collapse collapse show"
+                            aria-labelledby="headingoPulationByRace" data-bs-parent="#EvaluationAccordion">
+                            <div class="accordion-body">
+                                <table class="table ">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <th scope="col"></th>
+                                            <th scope="col">Community 1</th>
+                                            <th scope="col">Sonoma County</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">
+                                                Total
+                                            </th>
+                                            <td class="text-end">0</td>
+                                            <td class="text-end">489,710</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                                White
+                                            </th>
+                                            <td class="text-end">0%</td>
+                                            <td class="text-end table-dark">58.4%</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                                Hispanic
+                                            </th>
+                                            <td class="text-end">0%</td>
+                                            <td class="text-end table-secondary">28.9%</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                                Asian
+                                            </th>
+                                            <td class="text-end">0%</td>
+                                            <td class="text-end table-light">5.9%</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">
+                                                Black
+                                            </th>
+                                            <td class="text-end">0%</td>
+                                            <td class="text-end ">2.1%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js" integrity="sha512-FHZVRMUW9FsXobt+ONiix6Z0tIkxvQfxtCSirkKc5Sb4TKHmqq1dZa8DphF0XqKb3ldLu/wgMa8mT6uXiLlRlw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+    <script src="./scripts/mapco.js"></script>
+
+</body>
+
+</html>
