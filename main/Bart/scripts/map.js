@@ -753,8 +753,7 @@ function updateLyr(){
                                    enabled: true,
                                    position: 'end',
                                    color:idealTextColor,
-                                   textAlign:'center',
-                                   yPadding:-200
+                                   yAdjust:15
                                }
                              }
                            }
