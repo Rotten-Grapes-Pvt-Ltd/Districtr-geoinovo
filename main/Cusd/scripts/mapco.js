@@ -366,7 +366,7 @@ function addlayer(title,geojson,color,visible){
                 ['5'],
                 "#FF7F00",
                 ['6'],
-                "#999999",
+                "#FFFF90",
                 ['7'],
                 "#999999",
                 "hsl(0, 88%, 39%)"
